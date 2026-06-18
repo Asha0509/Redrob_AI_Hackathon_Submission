@@ -173,6 +173,66 @@ class RankerTests(unittest.TestCase):
         ranked = rank_candidates([candidate_b, candidate_a], self.job, top_k=2)
         self.assertEqual([row["candidate_id"] for row in ranked], ["CAND_0000001", "CAND_0000002"])
 
+    def test_inconsistent_experience_is_penalized(self) -> None:
+        consistent = make_candidate(
+            "CAND_0000001",
+            "Machine Learning Engineer",
+            [{"name": "Python", "proficiency": "expert", "endorsements": 10, "duration_months": 60}],
+            [{
+                "title": "Search Engineer",
+                "company": "ProductCo",
+                "industry": "Technology",
+                "description": "Built retrieval systems in production.",
+                "duration_months": 72,
+            }],
+            {},
+            years=6.0,
+        )
+        consistent["profile"]["summary"] = "ML engineer with 6 years of production experience."
+
+        inconsistent = make_candidate(
+            "CAND_0000002",
+            "Machine Learning Engineer",
+            [{"name": "Python", "proficiency": "expert", "endorsements": 10, "duration_months": 60}],
+            [{
+                "title": "Search Engineer",
+                "company": "ProductCo",
+                "industry": "Technology",
+                "description": "Built retrieval systems in production.",
+                "duration_months": 72,
+            }],
+            {},
+            years=16.0,
+        )
+        inconsistent["profile"]["summary"] = "ML engineer with 6 years of production experience."
+
+        consistent_score, _ = score_candidate(consistent, self.job)
+        inconsistent_score, evidence = score_candidate(inconsistent, self.job)
+        self.assertGreater(consistent_score, inconsistent_score)
+        self.assertIn("experience_inconsistent", evidence["penalty_labels"])
+
+    def test_zero_duration_expert_claims_are_penalized(self) -> None:
+        candidate = make_candidate(
+            "CAND_0000003",
+            "Machine Learning Engineer",
+            [
+                {"name": "Python", "proficiency": "expert", "endorsements": 5, "duration_months": 0},
+                {"name": "Ranking", "proficiency": "expert", "endorsements": 5, "duration_months": 0},
+                {"name": "FAISS", "proficiency": "expert", "endorsements": 5, "duration_months": 0},
+            ],
+            [{
+                "title": "Search Engineer",
+                "company": "ProductCo",
+                "industry": "Technology",
+                "description": "Built retrieval systems.",
+                "duration_months": 72,
+            }],
+            {},
+            years=6.0,
+        )
+        _, evidence = score_candidate(candidate, self.job)
+        self.assertIn("impossible_skill_claims", evidence["penalty_labels"])
+
 
 if __name__ == "__main__":
     unittest.main()

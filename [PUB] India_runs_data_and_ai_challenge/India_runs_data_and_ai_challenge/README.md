@@ -22,3 +22,7 @@ python -m unittest discover -s "$challenge\tests" -p "test_*.py" -v
 ```
 
 The full `candidates.jsonl` dataset is intentionally excluded from Git because it exceeds GitHub's normal single-file size limit.
+
+The final portal upload must be renamed to the team's exact registered
+participant ID, for example `team_xxx.csv`. Renaming must not change the CSV
+contents.

@@ -302,6 +302,17 @@ CAND_0081846,1,0.986824,"Lead AI Engineer (6.7y) | skills:0.31 history:0.22 titl
 
 `submission_enhanced.csv` contains the final ranked output included with this repository.
 
+> **Final upload filename:** The hackathon specification requires the uploaded
+> CSV filename to be your exact registered participant ID followed by `.csv`.
+> Before uploading, copy the validated result without editing its contents:
+>
+> ```powershell
+> Copy-Item .\submission_enhanced.csv .\<YOUR_REGISTERED_PARTICIPANT_ID>.csv
+> ```
+>
+> Do not upload it under the development filename `submission_enhanced.csv`
+> unless that is literally your registered participant ID.
+
 ## Validation and testing
 
 ### Validate the final CSV

@@ -488,6 +488,38 @@ def _penalty_score(candidate: dict) -> tuple[float, list[str]]:
         penalty += 0.02
         notes.append("no_github")
 
+    profile = candidate.get("profile", {})
+    stated_years = float(profile.get("years_of_experience", 0) or 0)
+    summary = str(profile.get("summary", ""))
+    summary_year_match = re.search(r"\b(\d+(?:\.\d+)?) years?\b", summary, re.IGNORECASE)
+    history_years = sum(
+        max(0.0, float(item.get("duration_months", 0) or 0))
+        for item in candidate.get("career_history", [])
+    ) / 12.0
+
+    summary_inconsistent = (
+        summary_year_match is not None
+        and abs(stated_years - float(summary_year_match.group(1))) > 2.0
+    )
+    history_inconsistent = (
+        stated_years > 0
+        and history_years > 0
+        and abs(stated_years - history_years) > 3.0
+    )
+    if summary_inconsistent or history_inconsistent:
+        penalty += 0.35
+        notes.append("experience_inconsistent")
+
+    zero_duration_expert_skills = sum(
+        1
+        for skill in candidate.get("skills", [])
+        if str(skill.get("proficiency", "")).lower() == "expert"
+        and float(skill.get("duration_months", 0) or 0) <= 0
+    )
+    if zero_duration_expert_skills >= 3:
+        penalty += 0.40
+        notes.append("impossible_skill_claims")
+
     return min(0.5, penalty), notes
 
 
