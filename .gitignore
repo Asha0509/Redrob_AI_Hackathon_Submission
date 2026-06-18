@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Generated files
+baseline_submission.csv
+tfidf_submission.csv
+*.pyc
+.coverage
+htmlcov/
+
+# Challenge data
+# The full dataset is ~487 MB and exceeds GitHub's single-file limit.
+candidates.jsonl
+
+# OS
+.DS_Store
+__MACOSX/
+Thumbs.db
+
+# Temporary
+*.tmp
+*.log
+.temp/
