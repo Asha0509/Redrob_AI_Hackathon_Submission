@@ -7,6 +7,7 @@ The project ranks a large pool of candidate profiles against a supplied job desc
 ## Table of contents
 
 - [Problem statement](#problem-statement)
+- [Challenge alignment](#challenge-alignment)
 - [Solution overview](#solution-overview)
 - [How the ranking works](#how-the-ranking-works)
 - [Scoring formula](#scoring-formula)
@@ -22,13 +23,39 @@ The project ranks a large pool of candidate profiles against a supplied job desc
 
 ## Problem statement
 
-Recruiting search systems often over-reward candidates who repeat fashionable terms while missing people whose experience demonstrates genuine role fit. The challenge is to turn a large, structured candidate dataset into a useful top-100 shortlist while:
+Recruiters must find the right people in enormous talent pools, but traditional keyword filters often miss hidden gems whose experience, intent, and behavioral signals are buried in profile noise. This project addresses the challenge of building an intelligent ranking engine that moves beyond surface-level matching and turns structured candidate data into a precise, actionable shortlist.
 
-1. understanding the supplied job description;
-2. combining multiple candidate and behavioral signals;
-3. reducing obvious false positives and keyword stuffing;
-4. explaining why each candidate was selected;
-5. producing a valid and reproducible submission.
+The core objective is a robust, workable proof of concept that does not merely filter candidates—it ranks them by predicted relevance. The system must:
+
+1. understand complex and nuanced job descriptions;
+2. identify contextual and semantic fit beyond keyword overlap;
+3. combine profile attributes, career metadata, and activity signals;
+4. reduce obvious false positives and keyword stuffing;
+5. explain why each candidate was selected;
+6. produce a fast, valid, and reproducible ranked shortlist.
+
+## Challenge alignment
+
+The implementation maps directly to the three capabilities requested in the problem statement.
+
+| Challenge objective | How this submission addresses it | Evidence |
+|---|---|---|
+| **Deep Job Understanding** | Parses the supplied DOCX, normalizes domain phrases, detects seniority, and builds must-have, nice-to-have, and negative concept groups | `build_job_profile()` and `_job_profile_from_text()` in `rank.py` |
+| **Contextual Relevance** | Combines alias-aware skill depth, applied career evidence, title fit, experience fit, and skill-history synergy instead of counting isolated words | `score_candidate()` and the feature-scoring functions in `rank.py` |
+| **Signal Integration** | Uses profile data, career history, skills, education, location, availability, responsiveness, activity, recruiter interest, and verification signals | `_signal_score()`, `_location_score()`, and `_education_score()` in `rank.py` |
+| **Accurate Shortlist** | Scores every candidate, applies bounded false-positive penalties, sorts deterministically, and returns the best 100 profiles | `rank_candidates()` in `rank.py` |
+| **Explainable Results** | Writes concise evidence and weighted feature contributions for every selected candidate | `make_reasoning()` and `submission_enhanced.csv` |
+| **Workable POC** | Runs fully offline with the Python standard library and includes validation, tests, and evaluation utilities | `validate_submission.py`, `tests/test_rank.py`, and `evaluate.py` |
+
+### Submission checklist
+
+| Required deliverable | Included | Location |
+|---|:---:|---|
+| **The Code** — complete, organized implementation | Yes | `rank.py`, `evaluate.py`, validator, and tests |
+| **The Blueprint** — methodology, technical choices, and architecture | Yes | This README |
+| **The Results** — ranked output in the predefined format | Yes | `submission_enhanced.csv` |
+
+This repository therefore contains all three requested artifacts: the ranking engine, its technical blueprint, and the generated candidate shortlist.
 
 ## Solution overview
 
@@ -377,4 +404,3 @@ This ranker should support human review, not make autonomous hiring decisions. B
 ## License and challenge context
 
 Created as a submission for the Redrob / India Runs Data & AI Challenge. Challenge-provided data and documents remain subject to their original terms.
-
